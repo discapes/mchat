@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind utilities;
+
+h1 {
+	@apply text-3xl font-bold;
+}
+
+body {
+	--custom-font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
+		Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+	--custom-bg-color: #101010;
+	--custom-panel-color: #222;
+	--custom-box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.8);
+	--custom-color: #fff;
+	--custom-color-brand: #24b47e;
+	--custom-color-secondary: #666;
+	--custom-border-color: #333;
+	--custom-border-width: 1px;
+	--custom-border: var(--custom-border-width) solid var(--custom-border-color);
+	--custom-border-radius: 6px;
+	--custom-spacing: 5px;
+
+	font-family: var(--custom-font-family);
+	background-color: var(--custom-bg-color);
+	color: var(--custom-color);
+}
+
+* {
+	border-color: var(--custom-border-color);
+}
+
+button,
+.button {
+	color: var(--custom-color);
+	border: var(--custom-border);
+	background-color: #444444;
+	display: inline-block;
+	text-align: center;
+	border-radius: var(--custom-border-radius);
+	padding: 0.5rem 1rem;
+	cursor: pointer;
+	text-align: center;
+	font-size: 0.9rem;
+	text-transform: uppercase;
+}
+
+label {
+	display: block;
+	margin: 5px 0;
+	color: var(--custom-color-secondary);
+	font-size: 0.8rem;
+	text-transform: uppercase;
+}
+
+input {
+	width: 100%;
+	border-radius: 5px;
+	border: var(--custom-border);
+	padding: 8px;
+	font-size: 0.9rem;
+	background-color: var(--custom-bg-color);
+	color: var(--custom-color);
+}
+
+input[disabled] {
+	color: var(--custom-color-secondary);
+}
+
+.form-widget {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 20px;
+}
+
+.bpad, .form-widget {
+	border: var(--custom-border);
+	padding: 20px;
+	border-radius: var(--custom-border-radius);
+}
+
+.form-widget input[type="submit"] {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	background-color: var(--custom-color-brand);
+	border: 1px solid var(--custom-color-brand);
+	text-transform: none !important;
+	transition: all 0.2s ease;
+}
+
+.form-widget input[type="submit"]:hover, .button:hover, button:hover {
+	background-color: #2a2a2a;
+}

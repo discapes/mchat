@@ -29,19 +29,32 @@ body {
 	border-color: var(--custom-border-color);
 }
 
-button,
-.button {
+.clickable {
+	padding: 0.5rem 1rem;
+	cursor: pointer;
 	color: var(--custom-color);
 	border: var(--custom-border);
 	background-color: #444444;
-	display: inline-block;
-	text-align: center;
-	border-radius: var(--custom-border-radius);
-	padding: 0.5rem 1rem;
-	cursor: pointer;
 	text-align: center;
 	font-size: 0.9rem;
-	text-transform: uppercase;
+	&:not(disabled):hover,
+	&:disabled {
+		background-color: #2a2a2a;
+	}
+}
+
+.button {
+	.clickable;
+	display: inline-block;
+	border-radius: var(--custom-border-radius);
+}
+
+.form-widget input[type='submit'] {
+	.button;
+	border: none;
+	background-color: var(--custom-color-brand);
+	border: 1px solid var(--custom-color-brand);
+	transition: all 0.2s ease;
 }
 
 label {
@@ -73,23 +86,22 @@ input[disabled] {
 	gap: 20px;
 }
 
-.bpad, .form-widget {
+.bpad,
+.form-widget {
 	border: var(--custom-border);
 	padding: 20px;
 	border-radius: var(--custom-border-radius);
 }
 
-.form-widget input[type="submit"] {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border: none;
-	background-color: var(--custom-color-brand);
-	border: 1px solid var(--custom-color-brand);
-	text-transform: none !important;
-	transition: all 0.2s ease;
+.bdiv {
+	background-color: var(--custom-border-color);
 }
 
-.form-widget input[type="submit"]:hover, .button:hover, button:hover {
-	background-color: #2a2a2a;
+.rowform input {
+	border: none !important;
+	border-radius: 0 !important;
+}
+
+.rowform {
+	display: flex;
 }

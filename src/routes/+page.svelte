@@ -142,7 +142,7 @@
 						Room {currentRoom.name} <button on:click={deleteCurrentRoom}>🗑️</button>
 					</h2>
 					<form
-						class="rowform border rounded-md basis-initial overflow-hidden"
+						class="rowform border rounded-md basis-initial shrink-0 overflow-hidden"
 						on:submit|preventDefault={oneField(post.bind(null, currentRoom))}
 					>
 						<input required name="!" placeholder="Message" />

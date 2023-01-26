@@ -1,10 +1,10 @@
-export async function send(message: string, room: string) {
-	const roomHash = hash(room);
-}
-
 export async function hash(msg: string) {
 	const HASH_FUN = 'SHA-256';
 	return await crypto.subtle.digest(HASH_FUN, new TextEncoder().encode(msg));
+}
+
+export async function hashText(msg: string) {
+	return bufferToHex(await hash(msg));
 }
 
 export async function encrypt(msg: string, pass: string) {
@@ -33,7 +33,6 @@ export async function decrypt(emsg: string, pass: string) {
 	]);
 
 	const iv = hexToBuffer(emsg.split('-')[1]);
-	console.log(iv);
 	const cipherText = hexToBuffer(emsg.split('-')[0]);
 	const msg = await crypto.subtle.decrypt(
 		{
@@ -47,11 +46,11 @@ export async function decrypt(emsg: string, pass: string) {
 	return new TextDecoder().decode(msg);
 }
 
-function bufferToHex(buffer: ArrayBuffer) {
+export function bufferToHex(buffer: ArrayBuffer) {
 	return [...new Uint8Array(buffer)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-function hexToBuffer(hex: string) {
+export function hexToBuffer(hex: string) {
 	const intArray = [...hex].reduce((accumulator, _, i, arr) => {
 		if (i % 2 === 0) accumulator.push(parseInt(arr[i] + arr[i + 1], 16));
 		return accumulator;

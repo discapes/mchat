@@ -6,6 +6,7 @@
 	import { oneField } from './utils';
 	import StoreReader from './StoreReader.svelte';
 	import { browser } from '$app/environment';
+	import { bufferToHex, decrypt, encrypt, hash, hashText } from './crypto';
 	export let data: PageData;
 
 	type Room = {
@@ -62,7 +63,7 @@
 		).send({
 			type: 'broadcast',
 			event: 'message',
-			payload: { text: msg }
+			payload: { text: await encrypt(msg, room.name) }
 		});
 		room.messages.update((msgs) => [msg, ...msgs]);
 		return true;
@@ -72,7 +73,11 @@
 		const room: Room = {
 			name,
 			messages: writable([]),
-			channel: createChannel(name, (msg) => room.messages.update((msgs) => [msg, ...msgs]))
+			channel: createChannel(await hashText(name), (msg) =>
+				decrypt(msg, room.name).then((decrypted) =>
+					room.messages.update((msgs) => [decrypted, ...msgs])
+				)
+			)
 		};
 		room.messages.subscribe((msgs) => localStorage.setItem(`room-${name}`, JSON.stringify(msgs)));
 		rooms[name] = room;
@@ -110,7 +115,7 @@
 							{room.name}
 						</button>
 					{/each}
-					<form class="rowform" on:submit|preventDefault={oneField(newRoom)}>
+					<form class="rowform overflow-hidden" on:submit|preventDefault={oneField(newRoom)}>
 						<input required name="!" placeholder="Room name" />
 						<input class="button basis-0" value="New" type="submit" />
 					</form>

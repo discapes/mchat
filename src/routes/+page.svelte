@@ -8,6 +8,7 @@
 	let allRoomNames: Writable<Set<string> | null> = writable(null);
 	let loadedRooms = new Map<string, Room>();
 	let currentRoom: Room | null = null;
+	let loadingRoom = false;
 
 	if (browser) {
 		$allRoomNames = localStorage.getItem('rooms')
@@ -19,16 +20,20 @@
 	}
 
 	async function setCurrentRoom(roomName: string) {
+		currentRoom = null;
 		if (loadedRooms.has(roomName)) {
 			currentRoom = loadedRooms.get(roomName)!;
 		} else {
+			loadingRoom = true;
 			const room = await loadRoom(roomName);
 			loadedRooms.set(roomName, room);
 			currentRoom = room;
+			loadingRoom = false;
 		}
 		allRoomNames.update((names) => names!.add(roomName));
 	}
 	function deleteCurrentRoom() {
+		currentRoom!.channel.then((c) => c.unsubscribe());
 		loadedRooms.delete(currentRoom!.name);
 		allRoomNames.update((names) => (names!.delete(currentRoom!.name), names));
 		currentRoom = null;
@@ -66,28 +71,26 @@
 		</div>
 		<div class="border-l" />
 		<div class="p-5 basis-full flex flex-col gap-5">
-			{#if currentRoom}
-				{#await currentRoom.channel}
-					<label>Loading chat...</label>
-				{:then channel}
-					<h2 class="flex justify-between">
-						Room {currentRoom.name} <button on:click={deleteCurrentRoom}>🗑️</button>
-					</h2>
-					<form
-						class="rowform border rounded-md basis-initial shrink-0 overflow-hidden"
-						on:submit|preventDefault={oneField((msg) => post(def(currentRoom), msg))}
-					>
-						<input required name="!" placeholder="Message" />
-						<input class="button basis-0" value="Send" type="submit" />
-					</form>
-					<div class="bpad flex flex-col gap-2 overflow-y-auto">
-						<StoreReader store={currentRoom.messages} let:value={messages}>
-							{#each messages as m}
-								<p class="border-b">{m}</p>
-							{/each}
-						</StoreReader>
-					</div>
-				{/await}
+			{#if loadingRoom}
+				<label>Loading room...</label>
+			{:else if currentRoom}
+				<h2 class="flex justify-between">
+					Room {currentRoom.name} <button on:click={deleteCurrentRoom}>🗑️</button>
+				</h2>
+				<form
+					class="rowform border rounded-md basis-initial shrink-0 overflow-hidden"
+					on:submit|preventDefault={oneField((msg) => post(def(currentRoom), msg))}
+				>
+					<input required name="!" placeholder="Message" />
+					<input class="button basis-0" value="Send" type="submit" />
+				</form>
+				<div class="bpad flex flex-col gap-2 overflow-y-auto">
+					<StoreReader store={currentRoom.messages} let:value={messages}>
+						{#each messages as m}
+							<p class="border-b">{m}</p>
+						{/each}
+					</StoreReader>
+				</div>
 			{:else}
 				<label>Select a room</label>
 			{/if}

@@ -27,7 +27,15 @@
 					const room: Room = {
 						name: name!,
 						messages: writable(JSON.parse(messages!)),
-						channel: createChannel(name!, (msg) => room.messages.update((msgs) => [msg, ...msgs]))
+						channel: hashText(name!).then((text) =>
+							createChannel(text, (msg) =>
+								decrypt(msg, room.name).then(
+									(decrypted) => (
+										console.log(decrypted), room.messages.update((msgs) => [decrypted, ...msgs])
+									)
+								)
+							)
+						)
 					};
 					room.messages.subscribe((msgs) =>
 						localStorage.setItem(`room-${name}`, JSON.stringify(msgs))
@@ -74,8 +82,10 @@
 			name,
 			messages: writable([]),
 			channel: createChannel(await hashText(name), (msg) =>
-				decrypt(msg, room.name).then((decrypted) =>
-					room.messages.update((msgs) => [decrypted, ...msgs])
+				decrypt(msg, room.name).then(
+					(decrypted) => (
+						console.log(decrypted), room.messages.update((msgs) => [decrypted, ...msgs])
+					)
 				)
 			)
 		};

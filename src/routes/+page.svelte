@@ -46,6 +46,28 @@
 </script>
 
 <div class="flex gap-10">
+	<div class="form-widget w-[400px]">
+		{#if !$allRoomNames}
+			<label>Loading identities...</label>
+		{:else}
+			Rooms
+			<div class="rounded-md border overflow-y-auto">
+				{#each [...$allRoomNames.values()] as roomName}
+					<button
+						on:click={() => setCurrentRoom(roomName)}
+						disabled={currentRoom?.name === roomName}
+						class="border-b clickable block w-full"
+					>
+						{roomName}
+					</button>
+				{/each}
+				<form class="rowform overflow-hidden" on:submit|preventDefault={oneField(setCurrentRoom)}>
+					<input required name="!" placeholder="Room name" />
+					<input class="button basis-0" value="New" type="submit" />
+				</form>
+			</div>
+		{/if}
+	</div>
 	<div class="rounded-md border flex w-[800px] h-[400px]">
 		<div class="p-5 grow flex flex-col gap-5 basis-full">
 			{#if !$allRoomNames}

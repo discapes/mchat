@@ -1,5 +1,7 @@
+const HASH_FUN = 'SHA-256';
+const ENCRYPT_ALG = 'AES-CBC';
+
 export async function hash(msg: string) {
-	const HASH_FUN = 'SHA-256';
 	return await crypto.subtle.digest(HASH_FUN, new TextEncoder().encode(msg));
 }
 
@@ -7,8 +9,20 @@ export async function hashText(msg: string) {
 	return bufferToHex(await hash(msg));
 }
 
+export async function genKeys() {
+	return await crypto.subtle.generateKey(
+		{
+			name: 'RSA-PSS',
+			modulusLength: 2048,
+			publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+			hash: HASH_FUN
+		},
+		true,
+		['encrypt', 'decrypt', 'verify', 'sign']
+	);
+}
+
 export async function encrypt(msg: string, pass: string) {
-	const ENCRYPT_ALG = 'AES-CBC';
 	const key = await crypto.subtle.importKey('raw', await hash(pass), ENCRYPT_ALG, false, [
 		'encrypt'
 	]);
@@ -27,7 +41,6 @@ export async function encrypt(msg: string, pass: string) {
 }
 
 export async function decrypt(emsg: string, pass: string) {
-	const ENCRYPT_ALG = 'AES-CBC';
 	const key = await crypto.subtle.importKey('raw', await hash(pass), ENCRYPT_ALG, false, [
 		'decrypt'
 	]);
